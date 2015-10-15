@@ -1,23 +1,22 @@
 function importData() {
+  var fn = 'foo' // scource csv file_name. latest report file)
   var fSource = DriveApp.getFolderById('0B9fDOhXLN0qcRlpLMV9PRlM4NTQ'); // reports_folder_id = id of folder where csv reports are saved
-  var fi = fSource.getFilesByName('foo'); // latest report file
+  var fi = fSource.getFilesByName(fn);
   var ss = SpreadsheetApp.openById('1zGZ55n9R-sMsbFnmf92lT5hBmGM3vQvy0zDLTxZL-B8'); // data_sheet_id = id of spreadsheet that holds the data to be updated with new report data
+  var wk = 'data' // worksheet_name to store imported data
 
   if ( fi.hasNext() ) { // proceed if "report.csv" file exists in the reports folder
     var file = fi.next();
     var csv = file.getBlob().getDataAsString();
     var csvData = CSVToArray(csv); // see below for CSVToArray function
-    var newsheet = ss.insertSheet('NEWDATA'); // create a 'NEWDATA' sheet to store imported data
-    // loop through csv data array and insert (append) as rows into 'NEWDATA' sheet
+    try {ss.setActiveSheet(ss.getSheetByName(wk)); ss.deleteActiveSheet(); } catch (e) {} // delete worksheet
+    var newsheet = ss.insertSheet(wk); // create a worksheet to store imported data
+    // loop through csv data array and insert (append) as rows into worksheet
     for ( var i=0, lenCsv=csvData.length; i<lenCsv; i++ ) {
       newsheet.getRange(i+1, 1, 1, csvData[i].length).setValues(new Array(csvData[i]));
     }
-    /*
-    ** report data is now in 'NEWDATA' sheet in the spreadsheet - process it as needed,
-    ** then delete 'NEWDATA' sheet using ss.deleteSheet(newsheet)
-    */
-    // rename the report.csv file so it is not processed on next scheduled run
-    //file.setName("report-"+(new Date().toString())+".csv");
+    // rename the csv file so it is not processed on next scheduled run
+    file.setName(fn+"-"+(new Date().toString())+".csv");
   }
 };
 
