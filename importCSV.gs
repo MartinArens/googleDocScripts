@@ -1,8 +1,27 @@
-function importData() {
-  var fn = 'foo' // scource csv file_name. latest report file)
-  var fSource = DriveApp.getFolderById('0B9fDOhXLN0qcRlpLMV9PRlM4NTQ'); // reports_folder_id = id of folder where csv reports are saved
-  var fi = fSource.getFilesByName(fn);
-  var ss = SpreadsheetApp.openById('1zGZ55n9R-sMsbFnmf92lT5hBmGM3vQvy0zDLTxZL-B8'); // data_sheet_id = id of spreadsheet that holds the data to be updated with new report data
+function onOpen() {
+  var ui = SpreadsheetApp.getUi();
+  ui.createMenu('Import Data')
+  .addItem('Run', 'importData')
+  .addToUi();
+};
+
+function getDocumentName()
+{
+  return SpreadsheetApp.getActiveSpreadsheet().getName();
+};
+
+function getDocumentId()
+{
+  return SpreadsheetApp.getActiveSpreadsheet().getId();
+};
+
+function importData() {  
+ 
+  var fn = getDocumentName() + '.csv' // scource csv file_name. latest report file. 
+  var ff = DriveApp.getFolderById('0B9fDOhXLN0qcRlpLMV9PRlM4NTQ'); // reports_folder_id = id of folder where csv reports are saved
+  var fi = ff.getFilesByName(fn);
+  var si = getDocumentId()
+  var ss = SpreadsheetApp.openById(si); // data_sheet_id = id of spreadsheet that holds the data to be updated with new report data
   var wk = 'data' // worksheet_name to store imported data
 
   if ( fi.hasNext() ) { // proceed if "report.csv" file exists in the reports folder
@@ -16,7 +35,7 @@ function importData() {
       newsheet.getRange(i+1, 1, 1, csvData[i].length).setValues(new Array(csvData[i]));
     }
     // rename the csv file so it is not processed on next scheduled run
-    file.setName(fn+"-"+(new Date().toString())+".csv");
+    // file.setName(fn+"-"+(new Date().toString())+".csv");
   }
 };
 

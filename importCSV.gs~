@@ -1,7 +1,7 @@
 function importData() {
-  var fn = 'foo' // scource csv file_name
+  var fn = 'foo' // scource csv file_name. latest report file)
   var fSource = DriveApp.getFolderById('0B9fDOhXLN0qcRlpLMV9PRlM4NTQ'); // reports_folder_id = id of folder where csv reports are saved
-  var fi = fSource.getFilesByName(fn); // latest report file
+  var fi = fSource.getFilesByName(fn);
   var ss = SpreadsheetApp.openById('1zGZ55n9R-sMsbFnmf92lT5hBmGM3vQvy0zDLTxZL-B8'); // data_sheet_id = id of spreadsheet that holds the data to be updated with new report data
   var wk = 'data' // worksheet_name to store imported data
 
